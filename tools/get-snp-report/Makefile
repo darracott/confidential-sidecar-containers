@@ -4,7 +4,7 @@
 CFLAGS:=-O2 -Wall
 LDFLAGS:=-static -s # strip C binaries
 
-all: bin/get-snp-report bin/get-fake-snp-report bin/verbose-report bin/hex2report
+all: bin/get-snp-report bin/get-fake-snp-report bin/verbose-report bin/hex2report bin/derive-key
 
 bin/hex2report: hex2report.o helpers.o
 	@mkdir -p bin
@@ -18,6 +18,11 @@ bin/get-snp-report: get-snp-report.o get-snp-report5.o get-snp-report6.o helpers
 	@mkdir -p bin
 	$(CC) $(LDFLAGS) -o $@ $^
 
+bin/derive-key: derive-key.o derive-key6.o helpers.o
+	@mkdir -p bin
+	$(CC) $(LDFLAGS) -o $@ $^
+	echo $(CC) $(LDFLAGS) -o $@ $^
+
 bin/verbose-report: verbose-report.o get-snp-report5.o get-snp-report6.o helpers.o
 	@mkdir -p bin
 	$(CC) $(LDFLAGS) -o $@ $^
@@ -25,6 +30,7 @@ bin/verbose-report: verbose-report.o get-snp-report5.o get-snp-report6.o helpers
 %.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	echo $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 clean:
 	find -name '*.o' -print0 | xargs -0 -r rm

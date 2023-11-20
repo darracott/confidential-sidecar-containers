@@ -3,7 +3,6 @@
 
 #pragma once
 
-
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <stdint.h>
@@ -12,7 +11,8 @@
 
 /* From sev-snp driver include/uapi/linux/psp-sev-guest.h */
 
-struct sev_snp_guest_request {
+struct sev_snp_guest_request
+{
     uint8_t req_msg_type;
     uint8_t rsp_msg_type;
     uint8_t msg_version;
@@ -20,12 +20,13 @@ struct sev_snp_guest_request {
     uint64_t request_uaddr;
     uint16_t response_len;
     uint64_t response_uaddr;
-    uint32_t error;            /* firmware error code on failure (see psp-sev.h) */
+    uint32_t error; /* firmware error code on failure (see psp-sev.h) */
 };
 
 // aka/replaced by this from include/uapi/linux/sev-guest.h
 //
-typedef struct {
+typedef struct
+{
     /* message version number (must be non-zero) */
     uint8_t msg_version;
 
@@ -37,7 +38,8 @@ typedef struct {
     uint64_t fw_err;
 } snp_guest_request_ioctl;
 
-enum snp_msg_type {
+enum snp_msg_type
+{
     SNP_MSG_TYPE_INVALID = 0,
     SNP_MSG_CPUID_REQ,
     SNP_MSG_CPUID_RSP,
@@ -56,20 +58,63 @@ enum snp_msg_type {
     SNP_MSG_TYPE_MAX
 };
 
-#define SNP_GUEST_REQ_IOC_TYPE        'S'
-#define SNP_GET_REPORT                _IOWR(SNP_GUEST_REQ_IOC_TYPE, 0x0, snp_guest_request_ioctl)
-#define SNP_GET_DERIVED_KEY           _IOWR(SNP_GUEST_REQ_IOC_TYPE, 0x1, snp_guest_request_ioctl)
-#define SNP_GET_EXT_REPORT            _IOWR(SNP_GUEST_REQ_IOC_TYPE, 0x2, snp_guest_request_ioctl)
+#define SNP_GUEST_REQ_IOC_TYPE 'S'
+#define SNP_GET_REPORT _IOWR(SNP_GUEST_REQ_IOC_TYPE, 0x0, snp_guest_request_ioctl)
+#define SNP_GET_DERIVED_KEY _IOWR(SNP_GUEST_REQ_IOC_TYPE, 0x1, snp_guest_request_ioctl)
+#define SNP_GET_EXT_REPORT _IOWR(SNP_GUEST_REQ_IOC_TYPE, 0x2, snp_guest_request_ioctl)
 
-/* from SEV-SNP Firmware ABI Specification Table 20 */
-
-typedef struct {
+/* from SEV-SNP Firmware ABI Specification Table 20 (Pre Nov 2022 Spec)*/
+typedef struct
+{
     uint8_t report_data[64];
     uint32_t vmpl;
     uint8_t reserved[28]; // needs to be zero
-} snp_report_req; // aka snp_report_req in (linux) include/uapi/linux/sev-guest.h
+} snp_report_req;         // aka snp_report_req in (linux) include/uapi/linux/sev-guest.h
 
-typedef struct {
-/* response data, see SEV-SNP spec for the format */
-    uint8_t  data[4000];
+typedef struct
+{
+    /* response data, see SEV-SNP spec for the format */
+    uint8_t data[4000];
 } snp_report_resp;
+
+/* from SEV-SNP Firmware ABI Specification Table 18 */
+typedef struct
+{
+    uint32_t root_key_select;
+    uint32_t reserved; // needs to be zero
+    uint64_t guest_field_select;
+    uint32_t vmpl;
+    uint32_t guest_svn;
+    uint64_t tcb_version;
+} snp_derived_key_req; // aka snp_derived_key_req in (linux) include/uapi/linux/sev-guest.h
+
+// typedef struct
+// {
+//     uint8_t root_key_select;
+//     uint8_t key_sel;
+//     uint8_t reserved[6]; // needs to be zero
+//     uint8_t guest_field_select[8];
+//     uint32_t vmpl;
+//     uint32_t guest_svn;
+//     uint64_t tcb_version;
+// } snp_key_req; // aka snp_report_req in (linux) include/uapi/linux/sev-guest.h
+
+/* from SEV-SNP Firmware ABI Specification Table 19 */
+
+// typedef struct
+// {
+//     uint8_t reserved[2]; // needs to be zero
+//     bool tcb_version;
+//     bool guest_svn;
+//     bool measurement;
+//     bool family_id;
+//     bool image_id;
+//     bool guest_policy;
+// } snp_guest_field_select;
+
+/* from SEV-SNP Firmware ABI Specification Table 20 */
+typedef struct
+{
+    /* response data, see SEV-SNP spec for the format */
+    uint8_t data[64];
+} snp_derived_key_resp; // aka snp_derived_key_resp in (linux) include/uapi/linux/sev-guest.h
