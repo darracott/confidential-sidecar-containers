@@ -21,12 +21,16 @@ int main(int argc, char *argv[])
 {
     bool success = false;
     uint8_t *derived_key[32];
-    const uint64_t *guest_field_select = 0;
+    // const uint64_t bitmask = 0b11111100000000000000000000000000000000000000000000000000000000000;
+    const uint64_t bitmask = 0b00000000000000000000000000000000000000000000000000000000000000000;
+    const uint64_t *guest_field_select = &bitmask;
 
-    if (argc > 1)
-    {
-        guest_field_select = (uint64_t *)argv[1];
-    }
+    // if (argc > 1)
+    // {
+    //     // guest_field_select = (uint64_t *)argv[1];
+    //     uint64_t bitmask = 0b11111100000000000000000000000000000000000000000000000000000000000;
+    //     guest_field_select = &bitmask;
+    // }
 
     if (supportsDevSevGuest())
     {
