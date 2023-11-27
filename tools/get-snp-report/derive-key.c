@@ -20,7 +20,7 @@
 int main(int argc, char *argv[])
 {
     bool success = false;
-    uint8_t *derived_key[32];
+    uint8_t derived_key[32];
     // const uint64_t bitmask = 0b11111100000000000000000000000000000000000000000000000000000000000;
     const uint64_t bitmask = 0b00000000000000000000000000000000000000000000000000000000000000000;
     const uint64_t *guest_field_select = &bitmask;
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
     if (supportsDevSevGuest())
     {
-        success = deriveKey6(guest_field_select, (void *)&derived_key);
+        success = deriveKey6(guest_field_select, derived_key);
     }
     else
     {
@@ -43,9 +43,9 @@ int main(int argc, char *argv[])
 
     if (success)
     {
-        for (size_t i = 0; i < sizeof(*derived_key); i++)
+        for (size_t i = 0; i < sizeof(derived_key); i++)
         {
-            fprintf(stdout, "%u", (uint8_t)*derived_key[i]);
+            fprintf(stdout, "%02x", derived_key[i]);
         }
 
         return 0;

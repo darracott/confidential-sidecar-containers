@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-CFLAGS:=-O2 -Wall
-LDFLAGS:=-static -s # strip C binaries
+CFLAGS:= -Wall -g
+LDFLAGS:=-static -g # strip C binaries
 
 all: bin/get-snp-report bin/get-fake-snp-report bin/verbose-report bin/hex2report bin/derive-key
 

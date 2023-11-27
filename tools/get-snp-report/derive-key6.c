@@ -19,7 +19,7 @@ bool supportsDevSevGuest()
     return access("/dev/sev-guest", W_OK) == 0;
 }
 
-bool deriveKey6(const uint64_t *guest_field_select, void **derived_key)
+bool deriveKey6(const uint64_t *guest_field_select, uint8_t derived_key[32])
 {
     fprintf(stdout, "Running deriveKey6\n");
     int fd;
@@ -103,31 +103,26 @@ fprintf(stdout, "IOCTL seems to be good\n");
 msg_derived_key_resp *response = (msg_derived_key_resp *)&snp_response.data;
 fprintf(stdout, "1\n");
 
-uint32_t *status = &response->status;
 fprintf(stdout, "2\n");
 
-if (status != 0)
+if (response->status != 0)
 {
     fprintf(stdout, "Failed as status != 0 \n");
-    fprintf(stderr, "Failed to get derived key, status: %d\n", *status);
+    fprintf(stderr, "Failed to get derived key, status: %d\n", response->status);
     return false;
 };
 fprintf(stdout, "3 status good\n");
 
-uint8_t *_derived_key = response->derived_key;
 fprintf(stdout, "4\n");
 
-*derived_key = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-fprintf(stdout, "5\n");
-
-memcpy(*derived_key, _derived_key, sizeof(uint8_t) * 32);
-fprintf(stdout, "6 done, now printing\n");
 
 // Print the key (for testing right now)
-for (int i = 0; i < 32; i++)
+for (size_t i = 0; i < 32; i++)
 {
-    printf("%u ", response->derived_key[i]);
+    derived_key[i] = response->derived_key[i];
+    printf("%02x", response->derived_key[i]);
 }
+printf("\n");
 
 return true;
 }
